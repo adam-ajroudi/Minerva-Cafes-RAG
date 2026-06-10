@@ -1,0 +1,190 @@
+[
+  {
+    "id": 1,
+    "question": "Which cafes in Berlin have the best wifi for long study sessions?",
+    "expected": "St. Oberholz (100+ Mbps, outlets everywhere, mentioned as 'unofficial Minerva campus') and Five Elephant in Kreuzberg (strong wifi, good outlets). Bonanza Coffee also good but slower wifi. Avoid Einstein Kaffee and Balzac.",
+    "response": "According to the source documents, Kaschk is a cafe in Berlin with great wifi, described as \"fast and free\" [Source: berlin_cafes_study_spots.txt]. It also has communal tables with outlets, making it suitable for long study sessions [Source: berlin_cafes_study_spots.txt]. \n\nAdditionally, the Staatsbibliothek (State Library) has reliable wifi [Source: berlin_cafes_study_spots.txt] and is highly recommended for focused work [Source: berlin_cafes_study_spots.txt]. However, it's a library, not a traditional cafe.\n\nThere is no information in the provided sources comparing the wifi speeds of different cafes in Berlin, but Kaschk and the Staatsbibliothek are both mentioned as having good wifi for study sessions [Source: berlin_cafes_study_spots.txt].",
+    "sources": [
+      "berlin_cafes_study_spots.txt (Berlin)",
+      "cross_city_comparison.txt (All Cities)"
+    ],
+    "chunks": [
+      {
+        "source": "berlin_cafes_study_spots.txt",
+        "distance": 0.2896321415901184,
+        "preview": "PLACES TO AVOID FOR STUDYING IN BERLIN:\n- Einstein Kaffee (chain): Mediocre coffee, terrible wifi, tourist trap pricing near landmarks\n- Any cafe on Friedrichstraße: Overpriced, noisy, zero outlets, d"
+      },
+      {
+        "source": "berlin_cafes_study_spots.txt",
+        "distance": 0.372078537940979,
+        "preview": "Kaschk (Linienstraße 40, Mitte)\nRating: ★★★★☆\n\"This place is a bar at night but during the day it's a chill cafe with great wifi. They have a combo of specialty coffee and craft beer which is very Ber"
+      },
+      {
+        "source": "berlin_cafes_study_spots.txt",
+        "distance": 0.37959522008895874,
+        "preview": "Staatsbibliothek (State Library, Potsdamer Str. 33)\nRating: ★★★★★\n\"Free, silent, has wifi, has outlets, open until 9pm on weekdays. If you need to LOCK IN and actually get work done, the Stabi is unbe"
+      },
+      {
+        "source": "berlin_cafes_study_spots.txt",
+        "distance": 0.38302212953567505,
+        "preview": "\"Every Minerva student in Berlin should get a Stabi card on day one. I cannot stress this enough. It's quiet, the wifi is reliable, and you can book private study rooms. The cafe on the ground floor i"
+      },
+      {
+        "source": "cross_city_comparison.txt",
+        "distance": 0.3907392621040344,
+        "preview": "1. Café Comma (Seoul) — 150+ Mbps, ₩2,000/hour, 24hr\n   \"Fastest wifi of any study spot in any Minerva city. Not even close.\""
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "question": "What is the cheapest filling meal a student can get in Hyderabad?",
+    "expected": "Street dosa at Ram Ki Bandi for ₹80 (~$0.96), idli/dosa/vada at tiffin centers for ₹30-50, or breakfast at local joints for ₹100 (~$1.20) unlimited. Hyderabad is the cheapest Minerva city for food.",
+    "response": "The cheapest filling meal a student can get in Hyderabad is the street dosa, which costs ₹30-80 ($0.36-0.96) [Source: cross_city_comparison.txt]. Alternatively, students can also get a full meal at local tiffin centers for ₹100 (~$1.20) [Source: hyderabad_cafes_and_food.txt, new_student_survival_guide.txt], which includes unlimited breakfast items such as idli, dosa, vada, and coffee [Source: new_student_survival_guide.txt]. However, if you're looking for the absolute cheapest option, the street dosa is the way to go. [Source: cross_city_comparison.txt]",
+    "sources": [
+      "cross_city_comparison.txt (All Cities)",
+      "new_student_survival_guide.txt (All Cities)",
+      "hyderabad_cafes_and_food.txt (Hyderabad)"
+    ],
+    "chunks": [
+      {
+        "source": "cross_city_comparison.txt",
+        "distance": 0.33618980646133423,
+        "preview": "1. Hyderabad: Street dosa (₹30-80 = $0.36-0.96) — cheapest filling meal in any Minerva city\n2. Seoul: Kimbap Cheonguk full meal (₩3,500-5,000 = $2.60-3.75)\n3. Taipei: Night market dinner (NT$150-200 ="
+      },
+      {
+        "source": "new_student_survival_guide.txt",
+        "distance": 0.346408486366272,
+        "preview": "Hyderabad:\n\"Try biryani within the first 48 hours — either Paradise or Bawarchi. Your life will change. Get comfortable with spicy food because EVERYTHING is spicy (and delicious). The tiffin centers "
+      },
+      {
+        "source": "hyderabad_cafes_and_food.txt",
+        "distance": 0.3499619960784912,
+        "preview": "BUDGET TIPS FROM MINERVA HYDERABAD STUDENTS:\n- Street food is safe and delicious — follow the crowds to find the best stalls\n- ₹100 (~$1.20) can get you a full meal at local tiffin centers (breakfast "
+      },
+      {
+        "source": "new_student_survival_guide.txt",
+        "distance": 0.4330943822860718,
+        "preview": "\"Never skip breakfast to save money. In Hyderabad and Taipei, breakfast is the cheapest meal of the day (under $1.50). In Seoul, convenience store breakfast is under $3. Skipping it just makes you spe"
+      },
+      {
+        "source": "hyderabad_cafes_and_food.txt",
+        "distance": 0.43605589866638184,
+        "preview": "Minerva Student Reviews — Hyderabad Cafes, Restaurants & Food Guide\n=====================================================================\nCompiled from student WhatsApp groups, Discord, and anonymous "
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "question": "Which San Francisco restaurants are affordable and filling for students on a budget?",
+    "expected": "Señor Sisig (Filipino-Mexican burritos, ~$12, massive portions), El Farolito (super burrito $13, open until 3am), Tu Lan (Vietnamese plates $10-12, huge portions), and Dumpling Home (soup dumplings $12-20 for a full meal).",
+    "response": "According to the source documents, two San Francisco restaurants that are considered affordable and filling for students on a budget are El Farolito and Señor Sisig [Source: new_student_survival_guide.txt]. However, there are no specific quotes or reviews about these restaurants in the provided documents. \n\nAnother mention of an affordable meal in San Francisco is from a student review that praises a burrito bowl and nachos with garlic sauce, but the name of the restaurant is not specified [Source: sf_affordable_restaurants.txt]. \n\nIt's also worth noting that students are advised to cook their own meals to save money, as eating out every meal can be expensive, with an estimated cost of $315 per week [Source: new_student_survival_guide.txt].",
+    "sources": [
+      "sf_affordable_restaurants.txt (San Francisco)",
+      "cross_city_comparison.txt (All Cities)",
+      "berlin_affordable_restaurants.txt (Berlin)",
+      "new_student_survival_guide.txt (All Cities)"
+    ],
+    "chunks": [
+      {
+        "source": "sf_affordable_restaurants.txt",
+        "distance": 0.32976871728897095,
+        "preview": "Minerva Student Reviews — San Francisco Affordable Restaurants\n================================================================\nCompiled from student group chats, Slack channels, and anonymous surveys"
+      },
+      {
+        "source": "sf_affordable_restaurants.txt",
+        "distance": 0.422075092792511,
+        "preview": "\"This is the best cheap meal in SF hands down. A burrito bowl feeds me for lunch AND dinner. The nachos are also insane. Get the garlic sauce on everything.\"\n— Class of 2027"
+      },
+      {
+        "source": "cross_city_comparison.txt",
+        "distance": 0.42384910583496094,
+        "preview": "\"If you rank the cities by how far a student budget goes for food, it's: Hyderabad > Seoul > Taipei > Buenos Aires > Berlin >>>>>> San Francisco. SF will destroy your budget if you eat out.\"\n— M25, re"
+      },
+      {
+        "source": "berlin_affordable_restaurants.txt",
+        "distance": 0.4319734573364258,
+        "preview": "Roamers (Pannierstraße 64, Neukölln)\nRating: ★★★☆☆ (value-wise)\n\"Beautiful cafe but kind of overpriced for what you get. An avocado toast is €11 and the portions are small. It's very Instagram-worthy "
+      },
+      {
+        "source": "new_student_survival_guide.txt",
+        "distance": 0.43288302421569824,
+        "preview": "San Francisco:\n\"Your first week, stock up on groceries at Trader Joe's. DO NOT eat out every meal — $15/meal x 3 meals x 7 days = $315/week, which is insane. Cook breakfast, pack lunch, eat out for di"
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "question": "Are there any 24-hour study spots in Seoul?",
+    "expected": "Yes — Café Comma is open 24 hours with unlimited coffee included for ₩2,000-3,000/hour (~$1.50-2.25). Korean study cafes (스터디카페) are also 24/7 in many locations with private booths, outlets, and free drinks.",
+    "response": "Yes, there are 24-hour study spots in Seoul. According to M25, \"The study cafe near our Minerva residence in Mapo-gu was open 24/7 and became my second home.\" [Source: seoul_cafes_study_spots.txt]. Additionally, M26 mentions that Café Comma, a Korean study cafe chain, is \"Open 24 hours\" [Source: seoul_cafes_study_spots.txt]. These study cafes offer a productive environment with amenities such as free drinks, outlets, and fast wifi, making them ideal for studying. [Source: seoul_cafes_study_spots.txt, cross_city_comparison.txt]",
+    "sources": [
+      "seoul_cafes_study_spots.txt (Seoul)",
+      "cross_city_comparison.txt (All Cities)"
+    ],
+    "chunks": [
+      {
+        "source": "seoul_cafes_study_spots.txt",
+        "distance": 0.3095979690551758,
+        "preview": "PLACES TO AVOID FOR STUDYING IN SEOUL:\n- Ediya Coffee in tourist areas: Too crowded, slow wifi, uncomfortable seats\n- Any cafe in Myeongdong: Tourist trap, expensive, no wifi or time-limited\n- Cheap c"
+      },
+      {
+        "source": "seoul_cafes_study_spots.txt",
+        "distance": 0.3791689872741699,
+        "preview": "\"The study cafe near our Minerva residence in Mapo-gu was open 24/7 and became my second home. ₩2,000/hour with free Americanos. I've never been more productive than during Seoul rotation and I credit"
+      },
+      {
+        "source": "seoul_cafes_study_spots.txt",
+        "distance": 0.4084895849227905,
+        "preview": "Study Cafe (스터디카페) — Various brands\nRating: ★★★★★\n\"If you haven't been to a Korean study cafe yet, GO. These are everywhere — literally every neighborhood has several. You pay ₩1,500-2,500/hour (~$1-2"
+      },
+      {
+        "source": "seoul_cafes_study_spots.txt",
+        "distance": 0.4248167872428894,
+        "preview": "Café Comma (Multiple locations, try Gangnam or Hongdae)\nRating: ★★★★★\n\"This is a Korean study cafe chain and it is INCREDIBLE. You pay by the hour (about ₩2,000-3,000/hour, so like $1.50-2.25 USD) and"
+      },
+      {
+        "source": "cross_city_comparison.txt",
+        "distance": 0.4302171468734741,
+        "preview": "8. Study Cafes / 스터디카페 (Seoul) — 80+ Mbps, ₩1,500-2,500/hour\n   \"Korea's study cafe concept should be exported to every country.\""
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "question": "Which places should students avoid eating at in Buenos Aires?",
+    "expected": "Avoid Puerto Madero (tourist trap, 3x normal prices) and restaurants on Calle Florida (designed for tourists, terrible value). Café Tortoni is overpriced for the food quality.",
+    "response": "According to the source documents, students should avoid eating in tourist areas in Buenos Aires, specifically Puerto Madero [Source: new_student_survival_guide.txt]. This is because prices are 2-3x normal and food quality is worse in these areas [Source: new_student_survival_guide.txt]. \n\nThere is no specific mention of particular restaurants or cafes to avoid in the provided sources, only a general warning about tourist areas.",
+    "sources": [
+      "new_student_survival_guide.txt (All Cities)",
+      "buenos_aires_cafes_and_food.txt (Buenos Aires)"
+    ],
+    "chunks": [
+      {
+        "source": "new_student_survival_guide.txt",
+        "distance": 0.3323401212692261,
+        "preview": "\"Never eat in a tourist area in any city. Prices are 2-3x normal and food quality is worse. In Berlin, avoid Alexanderplatz. In Taipei, avoid the area right around Taipei 101. In Buenos Aires, avoid P"
+      },
+      {
+        "source": "buenos_aires_cafes_and_food.txt",
+        "distance": 0.35996681451797485,
+        "preview": "Minerva Student Reviews — Buenos Aires Cafes & Study Spots\n=============================================================\nCompiled from student WhatsApp groups, Discord, and anonymous surveys (2024–202"
+      },
+      {
+        "source": "buenos_aires_cafes_and_food.txt",
+        "distance": 0.36556804180145264,
+        "preview": "\"El Sanjuanino is my #1 affordable eat in Buenos Aires. The empanadas are perfect. The humita (corn tamale) is also amazing. Cash only, always a short line, but it moves fast.\"\n— Class of 2026"
+      },
+      {
+        "source": "new_student_survival_guide.txt",
+        "distance": 0.3659707307815552,
+        "preview": "Buenos Aires:\n\"Argentine dinner starts at 9pm. Adjust your schedule. Your first meal should be empanadas from any local spot — they're cheap and delicious. Find your neighborhood parrilla for steak ni"
+      },
+      {
+        "source": "buenos_aires_cafes_and_food.txt",
+        "distance": 0.4045618176460266,
+        "preview": "Biblioteca Nacional (National Library, Agüero 2502, Recoleta)\nRating: ★★★★★\n\"Free, beautiful brutalist building, quiet study rooms, wifi, and air conditioning. You need to register but it's free and q"
+      }
+    ]
+  }
+]

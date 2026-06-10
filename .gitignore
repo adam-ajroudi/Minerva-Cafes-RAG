@@ -1,0 +1,17 @@
+# Project log (personal tracking)
+log.txt
+
+# Environment
+.env
+.venv/
+
+# Python
+__pycache__/
+*.pyc
+
+# ChromaDB local data
+chroma_data/
+
+# IDE
+.vscode/
+.idea/
