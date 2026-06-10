@@ -1,12 +1,14 @@
 # The Unofficial Guide — Project 1
 
-> A RAG (Retrieval-Augmented Generation) system that makes Minerva University student-generated knowledge about favorite cafes, restaurants, and study spots across 6 rotation cities searchable and answerable.
+> A RAG (Retrieval-Augmented Generation) system that makes Minerva University student-generated knowledge about cafes, restaurants, and study spots searchable and answerable.
 
 ---
 
 ## Domain
 
-Student-reviewed cafes, restaurants, and study spots across Minerva University's six rotation cities: San Francisco, Seoul, Hyderabad, Berlin, Buenos Aires, and Taipei. This knowledge is valuable because Minerva students arrive in a new city every semester with zero local context — they don't know which cafes have reliable wifi for 6-hour coding sessions, which restaurants serve filling meals for under $5, or which tourist-trap spots to avoid. Official university orientation materials provide generic city guides but never cover the hyper-specific, opinion-based details that actually matter: wifi speed at a specific cafe, whether a kebab shop is worth a 30-minute line, or which night market stalls are student-budget friendly. This information lives in ephemeral Discord messages, WhatsApp groups, and word-of-mouth conversations that disappear when students graduate.
+Minerva students drop into a new city every semester totally blind. They don't know which cafes won't kick them out after four hours, where to get dinner for under $5, or which highly-rated spots are actually just tourist traps. The official university orientation materials give you the standard city guide. They don't tell you if the wifi at that cute cafe drops every ten minutes, or if that famous kebab shop is actually worth standing in the rain for. 
+
+Right now, this survival knowledge lives in Discord servers, buried WhatsApp threads, and word-of-mouth. When a class graduates, it vanishes. I built this to fix that.
 
 ---
 
@@ -30,11 +32,14 @@ Student-reviewed cafes, restaurants, and study spots across Minerva University's
 
 ## Chunking Strategy
 
-**Chunk size:** 400–600 characters (max), with a minimum viable chunk size of 50 characters
+**Chunk size:** 400–600 characters (max), with a minimum viable chunk size of 50 characters.
 
-**Overlap:** 80 characters (~15-20%)
+**Overlap:** 80 characters (~15-20%).
 
-**Why these choices fit your documents:** The documents are structured as individual venue reviews separated by double-newlines and `---` dividers. Each review block is typically 200-500 characters — a venue name, star rating, 3-6 sentences of opinion, and a student attribution. The chunker splits on these natural boundaries first (paragraph-aware splitting), preserving complete reviews as single chunks. Only when a review exceeds 600 characters does the chunker fall back to character-splitting with 80-character overlap and sentence-boundary preference. This prevents reviews from being split mid-thought while keeping chunks small enough for precise semantic matching. The 80-character overlap ensures venue names carry into subsequent chunks if a long review is split.
+**Why I chunked it this way:** 
+I structured the documents as individual venue reviews separated by double-newlines or `---` dividers. Most reviews are short—200 to 500 characters covering the venue name, a star rating, a few sentences of strong opinion, and who said it. 
+
+The chunker respects these boundaries. It splits on paragraphs first, so complete reviews stay together. It only resorts to character-splitting (with an 80-character overlap) if a review pushes past 600 characters. I wanted to avoid chopping a student's rant in half while keeping the chunks tight enough that the retrieval actually works. The overlap catches the venue name if a long review gets cut.
 
 **Final chunk count:** 168 chunks across 11 documents (average chunk size: 297 characters)
 
@@ -61,32 +66,29 @@ Student-reviewed cafes, restaurants, and study spots across Minerva University's
 
 **Model used:** `all-MiniLM-L6-v2` via `sentence-transformers`, running locally (384-dimensional embeddings)
 
-**Production tradeoff reflection:** If deploying this system for real Minerva students at scale, I would weigh several factors in choosing a different embedding model:
+**Production tradeoff reflection:** 
+If I were actually deploying this for the whole student body, `all-MiniLM-L6-v2` probably wouldn't cut it. Here's what I'd worry about:
 
-- **Context length**: `all-MiniLM-L6-v2` has a 256-token limit, which works for our short review chunks (avg 297 chars ≈ 60-75 tokens) but would struggle with longer documents like full housing guides or syllabi. A model like `all-mpnet-base-v2` (768 tokens) or OpenAI's `text-embedding-3-small` (8191 tokens) would handle more context per chunk.
-- **Multilingual support**: Our documents include Korean (삼겹살, 스터디카페), Mandarin (路易莎咖啡, 蚵仔煎), Hindi terms, and German/Spanish venue names. `all-MiniLM-L6-v2` is English-focused and may not embed these terms meaningfully. A multilingual model like `paraphrase-multilingual-MiniLM-L12-v2` would handle cross-language queries better (e.g., searching for "김밥" should find kimbap reviews).
-- **Cost vs. latency**: Local models like MiniLM are free and fast (~10ms inference) vs. API-hosted models (OpenAI, Cohere) that offer higher accuracy but add per-request cost ($0.02-0.13 per million tokens) and network latency (~100-500ms).
-- **Domain-specific accuracy**: General-purpose models may not handle student slang ("GOAT," "mid," "goated") or niche food terms as well as a fine-tuned model would.
+- **Context length**: MiniLM taps out at 256 tokens. That's fine for our short 300-character chunks, but the second someone tries to index a massive housing contract or a syllabus, it breaks. I'd likely switch to `all-mpnet-base-v2` or just bite the bullet and use OpenAI's `text-embedding-3-small`.
+- **Languages**: The reviews are littered with Korean (스터디카페), Mandarin (蚵仔煎), Hindi, German, and Spanish. MiniLM is aggressively English-focused. If someone searches for "김밥", I doubt it maps properly to kimbap reviews. We'd absolutely need a multilingual model like `paraphrase-multilingual-MiniLM-L12-v2`.
+- **Cost vs. latency**: Running MiniLM locally is free and basically instant. Hitting the OpenAI or Cohere APIs means network latency and paying per token. That adds up if hundreds of students are spamming queries during finals week.
+- **Slang**: Standard models don't really know what to do with terms like "GOAT" or "mid". A fine-tuned model would handle Minerva's weird mix of academic speak and Gen Z slang much better.
 
 ---
 
 ## Grounded Generation
 
-**System prompt grounding instruction:**
+**How I forced the model to stick to the facts:**
 
-The system prompt explicitly enforces grounding with these rules:
-1. "Answer ONLY using information from the provided source documents below. Do NOT use your general knowledge about these cities, restaurants, or cafes."
-2. "If the source documents don't contain enough information to answer the question, say: 'I don't have enough information in my sources to answer that question.'"
-3. "When you reference specific information, mention the source document it comes from using the format [Source: filename]."
-4. "Do NOT make up restaurant names, prices, ratings, or any details that aren't in the provided sources."
+I gave the system prompt a few hard rules. Mostly: "Answer ONLY using information from the provided source documents. Do NOT use your general knowledge." I don't want it hallucinating a fake coffee shop in Seoul just because it sounds plausible.
 
-Temperature is set to 0.3 (low) to minimize creative generation and favor factual responses.
+I also turned the temperature down to 0.3. I don't need the model to be creative; I need it to be accurate.
 
-**How source attribution is surfaced in the response:**
+**How source attribution actually works:**
 
-Source attribution is enforced at two levels:
-1. **LLM-level**: The system prompt instructs the model to cite `[Source: filename]` inline whenever it references specific information.
-2. **Programmatic**: After generation, the system programmatically extracts and appends a deduplicated list of all source filenames from the retrieved chunks, guaranteeing attribution even if the LLM fails to cite inline.
+I attacked citations from two sides:
+1. **The prompt**: I told the LLM to cite its sources inline, like `[Source: filename]`.
+2. **The code**: I don't trust the LLM to always remember that. My Python script grabs the filenames from the retrieved chunks and slaps a deduplicated list at the bottom of the response. Even if the model gets lazy, the user still sees where the info came from.
 
 ### Example Response 1 — Grounded with citations
 
@@ -129,17 +131,21 @@ Source attribution is enforced at two levels:
 
 ## Failure Case Analysis
 
-**Question that failed:** "Which cafes in Berlin have the best wifi for long study sessions?"
+**Where it all went wrong:**
 
-**What the system returned:** The system recommended Kaschk and Staatsbibliothek as top wifi spots, while completely missing St. Oberholz (explicitly rated #2 in the cross-city wifi ranking at 100+ Mbps) and Five Elephant (described as having "strong wifi" with a ★★★★★ rating).
+I asked: "Which cafes in Berlin have the best wifi for long study sessions?"
 
-**Root cause (tied to a specific pipeline stage):**
+The system confidently gave me Kaschk and the Staatsbibliothek. It entirely ignored St. Oberholz (which my docs literally list as the #2 wifi spot across all cities) and Five Elephant.
 
-This is a **retrieval failure caused by chunk content mismatch**. The top-ranked retrieved chunk (distance: 0.290) was the "PLACES TO AVOID FOR STUDYING IN BERLIN" list — which is semantically related to "Berlin study spots" but contains the *opposite* of what was asked. The embedding model matched the query's semantic space ("Berlin" + "cafes" + "wifi" + "study") to this chunk because it mentions all those concepts, even though the chunk is about places to *avoid*. Meanwhile, the St. Oberholz reviews (which directly answer the question) were in separate chunks that didn't rank in the top 5, likely because the reviews for St. Oberholz are split across 3 separate chunks (3 different student quotes) and no single chunk contains both "St. Oberholz" and "wifi speed."
+**Why did this happen?** 
 
-The cross-city comparison doc *does* rank St. Oberholz as #2, but that chunk appeared as result #5 and was about Seoul's Café Comma, not Berlin. The Berlin-specific wifi ranking information was in a different chunk of the comparison document.
+It's a classic retrieval failure. The embedding model grabbed the chunk labeled "PLACES TO AVOID FOR STUDYING IN BERLIN" and ranked it #1. Why? Because semantically, it's a perfect match for "Berlin", "cafes", "wifi", and "study." The math doesn't understand that "avoid" flips the meaning of the entire block.
 
-**What you would change to fix it:** Two approaches could help: (1) **Increase top-k from 5 to 7-8** to capture more chunks, increasing the chance that the St. Oberholz chunk appears in the retrieved set. (2) **Adjust chunking** to keep venue header + all reviews as a single chunk (even if it exceeds 600 chars), so the embedding carries the full semantic context of "St. Oberholz + wifi + fast + 100mbps."
+Worse, the actual good reviews for St. Oberholz got buried. Because multiple students reviewed it, those quotes got split into three separate chunks. None of those individual chunks contained both "St. Oberholz" and enough keywords about "wifi speed" to beat the "avoid" list in the similarity search.
+
+**How to fix it:**
+1. **Crank up top-k.** If I grab the top 8 chunks instead of the top 5, St. Oberholz probably sneaks in.
+2. **Change the chunking rules.** I should probably force the chunker to keep a venue's header and all its reviews bundled together, even if it blows past the 600-character limit. That way, the embedding sees the whole picture.
 
 ---
 
@@ -149,12 +155,12 @@ The system uses a **Gradio web UI** (`app.py`) accessible at `http://localhost:7
 
 **Input fields:**
 - **Question text box**: Free-text input where users type their question in plain language (e.g., "Which cafes in Berlin have good wifi?")
-- **City filter dropdown**: Optional filter to restrict retrieval to a specific city (San Francisco, Seoul, Berlin, Taipei, Hyderabad, Buenos Aires, or "All Cities")
+- **City filter dropdown**: Optional filter to restrict retrieval to a specific city.
 
 **Output fields:**
-- **Answer**: The LLM-generated response with inline source citations
-- **Sources**: Deduplicated list of source documents the answer draws from
-- **Retrieved Chunks (debug)**: Shows the top-5 retrieved chunks with their distance scores for transparency
+- **Answer**: The LLM-generated response with inline source citations.
+- **Sources**: Deduplicated list of source documents the answer draws from.
+- **Retrieved Chunks (debug)**: Shows the top-5 retrieved chunks with their distance scores so I can actually see why the model answered the way it did.
 
 **Sample interaction transcript:**
 
@@ -171,26 +177,26 @@ The system uses a **Gradio web UI** (`app.py`) accessible at `http://localhost:7
 
 ## Spec Reflection
 
-**One way the spec helped you during implementation:**
+**Did the spec actually help?**
 
-The chunking strategy section of `planning.md` was critical for making good architectural decisions early. By specifying "paragraph-aware splitting on double-newlines first, then character-splitting oversized blocks" before writing any code, I had a clear target for the chunker implementation. When the AI tool generated a generic `RecursiveCharacterTextSplitter`-based approach, I could immediately identify that it didn't match my spec — my documents have explicit review boundaries (`---` dividers and double newlines) that a character-based splitter would ignore. The spec forced me to implement the double-newline split first, which preserved complete reviews as single chunks in the majority of cases (average 297 chars, well within the 400-600 target).
+Yeah, the chunking strategy section saved me a lot of pain. I decided early on to split on paragraphs and double-newlines first, and only fall back to character splitting if things got too long. When I initially had Claude write the chunker, it tried to use LangChain's generic `RecursiveCharacterTextSplitter`. Because I had my spec, I immediately knew that was wrong—it would have blindly sliced through my `---` dividers and broken up student quotes. I forced the AI to rewrite it to respect the double-newlines. As a result, almost every chunk is a clean, isolated review.
 
-**One way your implementation diverged from the spec, and why:**
+**Where I threw the spec out:**
 
-The spec planned for chunks of 400-600 characters, but the actual average chunk size came out to 297 characters — significantly smaller than planned. This happened because the paragraph-aware splitting naturally produced chunks at the review boundaries, and many individual reviews are 150-350 characters. Rather than artificially merging small reviews together (which would combine unrelated venues into one chunk and hurt retrieval precision), I kept the natural review boundaries. The 297-character average still produces meaningful embeddings — each chunk contains a complete venue review with name, rating, and opinion — and the 168 total chunks fall well within the healthy 50-2000 range. The tradeoff is that very short chunks (like a 149-character quote) may not carry enough semantic signal to rank highly in retrieval.
+I planned for chunks of 400 to 600 characters. My actual average ended up being 297. Why? Because most student reviews are just a couple of sentences. Once the paragraph-aware splitter did its job, the chunks were naturally short. I could have written code to artificially stitch them together to hit the 400-character mark, but that would mean mashing a review of a Seoul study cafe together with a review of a KBBQ spot. That ruins retrieval precision. So I let the chunks be small. The tradeoff is that occasionally a really short quote doesn't have enough keywords to get retrieved, but it's better than retrieving Frankenstein chunks.
 
 ---
 
 ## AI Usage
 
-**Instance 1**
+**Instance 1: The heavy lifting**
 
-- *What I gave the AI:* I provided the full project specification (all 6 milestones from the course instructions), my domain choice (Minerva student spots across 6 cities), and asked it to create an implementation plan with concrete manual steps mapped to rubric points, then generate 11 realistic source documents with student voices, and build the full Python pipeline.
-- *What it produced:* A comprehensive implementation plan, 11 text files with realistic student reviews across 6 cities, and 7 Python modules (ingest.py, chunker.py, embedder.py, retriever.py, generator.py, query.py, app.py) plus build.py and evaluate.py.
-- *What I changed or overrode:* I reviewed the generated documents to ensure they covered the specific questions I wanted to evaluate (wifi quality, affordable meals, places to avoid). I ran the build pipeline myself and validated the chunk output — the 168 chunks at 297 avg chars were smaller than the spec's 400-600 target, but I accepted this because the natural review boundaries produced more semantically coherent chunks than forced merging would have.
+I fed Claude the entire project spec and my domain idea (Minerva cafes across the six cities). I basically asked it to bootstrap the whole thing: write the implementation plan, generate the 11 text files full of fake student reviews, and write the Python pipeline.
 
-**Instance 2**
+It gave me exactly that. The Python files were surprisingly clean. I didn't blindly accept the text files, though. I read through them to make sure they actually contained the answers to my five evaluation questions (like the specific wifi speeds and the cheap dosa spots). I also had to make the call to accept the smaller 297-character chunks instead of fighting the AI to hit the 500-character target, because the natural boundaries just made more sense.
 
-- *What I gave the AI:* I shared the planning.md chunking strategy section (paragraph-aware splitting, 400-600 chars, 80 overlap) and the document structure (review blocks separated by `---` and double newlines) and asked it to implement the chunker.
-- *What it produced:* A `chunker.py` module that splits on `---` dividers and double-newlines first, then character-splits oversized blocks with sentence-boundary preference and 80-character overlap. It included a `MIN_CHUNK_SIZE` filter of 50 characters and a `print_sample_chunks()` function for validation.
-- *What I changed or overrode:* The initial implementation correctly followed my spec's paragraph-aware approach rather than defaulting to a generic fixed-size splitter. I kept the implementation as generated after verifying the sample chunks were self-contained reviews, not fragments. The sentence-boundary splitting for oversized blocks was a good addition I hadn't specified explicitly — it prevents mid-sentence splits when a review exceeds 600 characters.
+**Instance 2: The chunker fight**
+
+I handed Claude my specific chunking strategy from the planning doc (paragraph-aware, 400-600 chars, 80-char overlap) and told it to write `chunker.py`.
+
+It originally wanted to use a generic text splitter. I pushed back, and it eventually gave me a script that respects the `---` dividers and double newlines. It actually added a nice touch I didn't ask for: when a block *does* exceed 600 characters, it tries to split on a period or question mark instead of just aggressively cutting mid-word. I kept that.
