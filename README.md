@@ -1,4 +1,4 @@
-# The Unofficial Guide — Project 1
+# The Unofficial Guide: Project 1
 
 > A RAG (Retrieval-Augmented Generation) system that makes Minerva University student-generated knowledge about cafes, restaurants, and study spots searchable and answerable.
 
@@ -37,7 +37,7 @@ Right now, this survival knowledge lives in Discord servers, buried WhatsApp thr
 **Overlap:** 80 characters (~15-20%).
 
 **Why I chunked it this way:** 
-I structured the documents as individual venue reviews separated by double-newlines or `---` dividers. Most reviews are short—200 to 500 characters covering the venue name, a star rating, a few sentences of strong opinion, and who said it. 
+I structured the documents as individual venue reviews separated by double-newlines or `---` dividers. Most reviews are short (200 to 500 characters) covering the venue name, a star rating, a few sentences of strong opinion, and who said it. 
 
 The chunker respects these boundaries. It splits on paragraphs first, so complete reviews stay together. It only resorts to character-splitting (with an 80-character overlap) if a review pushes past 600 characters. I wanted to avoid chopping a student's rant in half while keeping the chunks tight enough that the retrieval actually works. The overlap catches the venue name if a long review gets cut.
 
@@ -45,19 +45,19 @@ The chunker respects these boundaries. It splits on paragraphs first, so complet
 
 ### Sample Chunks
 
-**Chunk 1** — from `hyderabad_cafes_and_food.txt` (Hyderabad):
-> "The Indian Coffee House is a Hyderabad essential. Don't go for wifi or outlets. Go for the ₹30 filter coffee, the dosa for ₹50, and the feeling of sitting in a place with decades of history. Then go to Roastery for your actual study session." — Class of 2026
+**Chunk 1** from `hyderabad_cafes_and_food.txt` (Hyderabad):
+> "The Indian Coffee House is a Hyderabad essential. Don't go for wifi or outlets. Go for the ₹30 filter coffee, the dosa for ₹50, and the feeling of sitting in a place with decades of history. Then go to Roastery for your actual study session." (Class of 2026)
 
-**Chunk 2** — from `cross_city_comparison.txt` (All Cities):
-> "Going from Hyderabad where a full meal is $1 to San Francisco where a sandwich is $15 was the biggest culture shock of my Minerva experience." — M26
+**Chunk 2** from `cross_city_comparison.txt` (All Cities):
+> "Going from Hyderabad where a full meal is $1 to San Francisco where a sandwich is $15 was the biggest culture shock of my Minerva experience." (M26)
 
-**Chunk 3** — from `taipei_cafes_and_food.txt` (Taipei):
-> Louisa Coffee (路易莎咖啡, multiple locations — try Zhongxiao or near NTU) Rating: ★★★★★ "Taiwan's answer to Starbucks but actually GOOD for studying. An Americano is NT$65 (~$2 USD), wifi is fast and reliable, outlets at most seats, and they're open until 10-11pm..."
+**Chunk 3** from `taipei_cafes_and_food.txt` (Taipei):
+> Louisa Coffee (路易莎咖啡, multiple locations, try Zhongxiao or near NTU) Rating: ★★★★★ "Taiwan's answer to Starbucks but actually GOOD for studying. An Americano is NT$65 (~$2 USD), wifi is fast and reliable, outlets at most seats, and they're open until 10-11pm..."
 
-**Chunk 4** — from `seoul_cafes_study_spots.txt` (Seoul):
-> "Tom N Toms is my go-to when I don't want to pay for a study cafe. The atmosphere varies by location — Sinchon one is great, Gangnam one is too crowded. Pro tip: the ones near universities (Sinchon, Ewha) are most study-friendly." — Class of 2026
+**Chunk 4** from `seoul_cafes_study_spots.txt` (Seoul):
+> "Tom N Toms is my go-to when I don't want to pay for a study cafe. The atmosphere varies by location. The Sinchon one is great, Gangnam one is too crowded. Pro tip: the ones near universities (Sinchon, Ewha) are most study-friendly." (Class of 2026)
 
-**Chunk 5** — from `berlin_affordable_restaurants.txt` (Berlin):
+**Chunk 5** from `berlin_affordable_restaurants.txt` (Berlin):
 > Mustafa's Gemüse Kebap (Mehringdamm 32, Kreuzberg) Rating: ★★★★★ "Yes, the line is insane (30-60 minutes on weekends). Yes, it's worth it. The döner kebap here is €6 and it's genuinely the best thing I've ever eaten for under €10..."
 
 ---
@@ -90,7 +90,7 @@ I attacked citations from two sides:
 1. **The prompt**: I told the LLM to cite its sources inline, like `[Source: filename]`.
 2. **The code**: I don't trust the LLM to always remember that. My Python script grabs the filenames from the retrieved chunks and slaps a deduplicated list at the bottom of the response. Even if the model gets lazy, the user still sees where the info came from.
 
-### Example Response 1 — Grounded with citations
+### Example Response 1: Grounded with citations
 
 **Query:** "What is the cheapest filling meal a student can get in Hyderabad?"
 
@@ -98,19 +98,19 @@ I attacked citations from two sides:
 
 **Sources:** cross_city_comparison.txt, new_student_survival_guide.txt, hyderabad_cafes_and_food.txt
 
-### Example Response 2 — Grounded with citations
+### Example Response 2: Grounded with citations
 
 **Query:** "Are there any 24-hour study spots in Seoul?"
 
-**Response:** "Yes, there are 24-hour study spots in Seoul. According to M25, 'The study cafe near our Minerva residence in Mapo-gu was open 24/7 and became my second home.' [Source: seoul_cafes_study_spots.txt]. Additionally, M26 mentions that Café Comma, a Korean study cafe chain, is 'Open 24 hours' [Source: seoul_cafes_study_spots.txt]. These study cafes offer a productive environment with amenities such as free drinks, outlets, and fast wifi."
+**Response:** "Yes, there are 24-hour study spots in Seoul. According to M25, 'The study cafe near our residence in Mapo-gu was open 24/7 and became my second home.' [Source: seoul_cafes_study_spots.txt]. Additionally, M26 mentions that Café Comma, a Korean study cafe chain, is 'Open 24 hours' [Source: seoul_cafes_study_spots.txt]. These study cafes offer a productive environment with amenities such as free drinks, outlets, and fast wifi."
 
 **Sources:** seoul_cafes_study_spots.txt, cross_city_comparison.txt
 
-### Out-of-scope Query — Refusal Response
+### Out-of-scope Query: Refusal Response
 
 **Query:** "What is the best pizza restaurant in New York City?"
 
-**Response:** "I don't have enough information in my sources to answer that question. The provided documents only cover Minerva University student spots in San Francisco, Seoul, Berlin, Taipei, Hyderabad, and Buenos Aires — New York City is not included in these reviews."
+**Response:** "I don't have enough information in my sources to answer that question. The provided documents only cover Minerva University student spots in San Francisco, Seoul, Berlin, Taipei, Hyderabad, and Buenos Aires. New York City is not included in these reviews."
 
 ---
 
@@ -122,7 +122,7 @@ I attacked citations from two sides:
 | 2 | What is the cheapest filling meal a student can get in Hyderabad? | Street dosa ₹30-80, tiffin centers ₹100, Hyderabad is cheapest Minerva city. | Correctly identified street dosa (₹30-80), tiffin centers (₹100), and ranked Hyderabad as cheapest. Cited all relevant sources. | Relevant | Accurate |
 | 3 | Which SF restaurants are affordable and filling for students? | Señor Sisig ($12), El Farolito ($13), Tu Lan ($10-12), Dumpling Home ($12-20). | Named El Farolito and Señor Sisig but said "no specific quotes" despite them existing. Missed Tu Lan and Dumpling Home entirely. One retrieved chunk lost the restaurant name. | Partially relevant | Partially accurate |
 | 4 | Are there any 24-hour study spots in Seoul? | Café Comma (24hr, ₩2,000-3,000/hr), Korean study cafes (스터디카페) 24/7. | Correctly identified Café Comma as 24hr, mentioned study cafes in Mapo-gu, cited pricing and amenities. | Relevant | Accurate |
-| 5 | Which places should students avoid eating at in Buenos Aires? | Puerto Madero, Calle Florida, Café Tortoni (overpriced). | Identified Puerto Madero but said "no specific mention of particular restaurants to avoid" — missed the Calle Florida and Café Tortoni warnings that exist in the documents. | Partially relevant | Partially accurate |
+| 5 | Which places should students avoid eating at in Buenos Aires? | Puerto Madero, Calle Florida, Café Tortoni (overpriced). | Identified Puerto Madero but said "no specific mention of particular restaurants to avoid" and missed the Calle Florida and Café Tortoni warnings that exist in the documents. | Partially relevant | Partially accurate |
 
 **Retrieval quality:** Relevant / Partially relevant / Off-target
 **Response accuracy:** Accurate / Partially accurate / Inaccurate
@@ -179,7 +179,7 @@ The system uses a **Gradio web UI** (`app.py`) accessible at `http://localhost:7
 
 **Did the spec actually help?**
 
-Yeah, the chunking strategy section saved me a lot of pain. I decided early on to split on paragraphs and double-newlines first, and only fall back to character splitting if things got too long. When I initially had Claude write the chunker, it tried to use LangChain's generic `RecursiveCharacterTextSplitter`. Because I had my spec, I immediately knew that was wrong—it would have blindly sliced through my `---` dividers and broken up student quotes. I forced the AI to rewrite it to respect the double-newlines. As a result, almost every chunk is a clean, isolated review.
+Yeah, the chunking strategy section saved me a lot of pain. I decided early on to split on paragraphs and double-newlines first, and only fall back to character splitting if things got too long. When I initially had Claude write the chunker, it tried to use LangChain's generic `RecursiveCharacterTextSplitter`. Because I had my spec, I immediately knew that was wrong. It would have blindly sliced through my `---` dividers and broken up student quotes. I forced the AI to rewrite it to respect the double-newlines. As a result, almost every chunk is a clean, isolated review.
 
 **Where I threw the spec out:**
 
